@@ -1,6 +1,7 @@
+import csv
+
 class CellNotInitialisedError(Exception):
     pass
-
 
 class Table:
     def __init__(self, rows, cols):
@@ -96,18 +97,25 @@ class Table:
         if not values:
             raise ValueError("At least one cell must be provided to calculate the mean")
 
-    def sum(self, *args):
-        result = 0
+    def read_csv(self, file_path):
+        with open(file_path, newline='') as f:
+            reader = csv.reader(f)
+            for row_idx, row in enumerate(reader, start=1):
+                for col_idx, value in enumerate(row, start=1):
+                    cell = f"{chr(64 + col_idx)}{row_idx}"
+                    self.set_value(cell, value)
 
-        for arg in args:
-            if (isinstance(arg, str) and ':' in arg):
-                values = self.get_values(arg)
-                total += sum(values)
-            elif isinstance(arg, str):
-                total += self.get_value(arg)
-            else:
-                total += arg
+    def evaluate(self, cell):
+        value = self.get_value(cell)
+        if isinstance(value, str) and value.startswith('='):
+            return self.evaluate_formula(value[1:])
+        return value
+    
+    def evaluate_formula(self, formula):
+        pass
+
+    def evaluate_all(self):
+        for cell in self.cells:
+            self.cells[cell] = self.evaluate_cell(cell)
 
 
-    def count(self, *args):
-        result = 0
