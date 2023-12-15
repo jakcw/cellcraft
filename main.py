@@ -1,6 +1,7 @@
 class CellNotInitialisedError(Exception):
     pass
 
+
 class Table:
     def __init__(self, rows, cols):
         self.rows = rows
@@ -95,3 +96,18 @@ class Table:
         if not values:
             raise ValueError("At least one cell must be provided to calculate the mean")
 
+    def sum(self, *args):
+        result = 0
+
+        for arg in args:
+            if (isinstance(arg, str) and ':' in arg):
+                values = self.get_values(arg)
+                total += sum(values)
+            elif isinstance(arg, str):
+                total += self.get_value(arg)
+            else:
+                total += arg
+
+
+    def count(self, *args):
+        result = 0
