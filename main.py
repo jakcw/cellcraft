@@ -49,7 +49,6 @@ class Table:
     def get_value(self, cell):
         return self.cells.get(cell, 0)
     
-    # Addition of two or more cells
     def add(self, *cells):
         result = 0
         for cell in cells:
@@ -59,14 +58,12 @@ class Table:
                 result += self.get_value(cell)
         return result
 
-    # Subtraction of two or more cells        
     def subtract(self, result_cell, *cells):
         result = self.get_value(cells[0])
         for cell in cells[1:]:
             result -= self.get_value(cell)
         self.set_value(result_cell, result)
 
-    # Division of two cells
     def divide(self, result_cell, cell_one, cell_two):
         try:
             result = self.get_value(cell_one) / self.get_value(cell_two)
@@ -76,11 +73,10 @@ class Table:
             print("Division by zero not allowed")
 
         
-    # Multiplication of two or more cells
     def mul(self, *cells):
         result = 1
         for cell in cells:
-            if ':' in cell:  # Handle cell ranges
+            if ':' in cell: 
                 result *= sum(self.get_values_from_range(cell))
             else:
                 result *= self.get_value(cell)
@@ -89,33 +85,16 @@ class Table:
     def average(self, *cells):
         values = []
         for cell in cells:
-            if ':' in cell:  # Handle cell ranges
+            if ':' in cell: 
                 values.extend(self.get_values_from_range(cell))
             else:
                 values.append(self.get_value(cell))
-
         if not values:
             raise ValueError("At least one cell must be provided to calculate the mean")
 
     def read_csv(self, file_path):
-        with open(file_path, newline='') as f:
-            reader = csv.reader(f)
-            for row_idx, row in enumerate(reader, start=1):
-                for col_idx, value in enumerate(row, start=1):
-                    cell = f"{chr(64 + col_idx)}{row_idx}"
-                    self.set_value(cell, value)
+        with open(file_path, 'r') as f:
+            pass
 
-    def evaluate(self, cell):
-        value = self.get_value(cell)
-        if isinstance(value, str) and value.startswith('='):
-            return self.evaluate_formula(value[1:])
-        return value
-    
-    def evaluate_formula(self, formula):
-        pass
-
-    def evaluate_all(self):
-        for cell in self.cells:
-            self.cells[cell] = self.evaluate_cell(cell)
 
 
